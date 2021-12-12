@@ -1,6 +1,6 @@
 {
-  "name": "vscode-prettierignore",
-  "displayName": "Prettier Ignore",
+  "name": "vscode-ignore-prettier",
+  "displayName": "Ignore Prettier",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -10,20 +10,20 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:prettierignore.add",
-    "onCommand:prettierignore.remove"
+    "onCommand:ignoreprettier.add",
+    "onCommand:ignoreprettier.remove"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "prettierignore.add",
-        "category": "Prettier Ignore",
+        "command": "ignoreprettier.add",
+        "category": "Ignore Prettier",
         "title": "Add"
       },
       {
-        "command": "prettierignore.remove",
-        "category": "Prettier Ignore",
+        "command": "ignoreprettier.remove",
+        "category": "Ignore Prettier",
         "title": "Remove"
       }
     ]
