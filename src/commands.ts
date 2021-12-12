@@ -76,7 +76,7 @@ export const remove = async () => {
   );
 
   const escapedFilename = escapeRegExp(filename);
-  const regexp = new RegExp(escapedFilename + "\\s*", "g");
+  const regexp = new RegExp(`^${escapedFilename}\\s*`, "gm");
   const newValue = currentValue.replace(regexp, "");
   if (newValue.trim() === "") {
     workspace.fs.delete(uri);
