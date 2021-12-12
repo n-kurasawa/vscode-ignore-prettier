@@ -1,11 +1,10 @@
-import { commands, ExtensionContext, window } from 'vscode';
+import { commands, ExtensionContext } from "vscode";
+import { add } from "./commands";
 
 export function activate(context: ExtensionContext) {
-	console.log('vscode-prettierignore is activated.');
+  console.log('Extension "vscode-prettierignore" is activated.');
 
-	let disposable = commands.registerCommand('prettierignore.add', () => {
-		window.showInformationMessage('Hello World from Prettier Ignore!');
-	});
+  const addCommand = commands.registerCommand("prettierignore.add", add);
 
-	context.subscriptions.push(disposable);
+  context.subscriptions.push(addCommand);
 }
