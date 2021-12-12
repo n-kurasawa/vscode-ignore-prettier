@@ -10,14 +10,15 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:vscode-prettierignore.helloWorld"
+        "onCommand:prettierignore.add"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-prettierignore.helloWorld",
-				"title": "Hello World"
+				"command": "prettierignore.add",
+				"category": "Prettier Ignore",
+				"title": "Add"
 			}
 		]
 	},
