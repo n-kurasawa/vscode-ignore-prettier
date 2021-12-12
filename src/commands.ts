@@ -1,7 +1,7 @@
-import { window, workspace, Uri } from "vscode";
-import { TextEncoder } from "util";
+import { window, workspace } from "vscode";
+import { posix, sep } from "path";
 
-export const add = () => {
+export const add = async () => {
   const folders = workspace.workspaceFolders;
   if (folders === undefined || folders.length > 1) {
     console.error(`need a folder.`);
@@ -14,10 +14,14 @@ export const add = () => {
     return;
   }
 
-  const uri = Uri.file(`${folders[0].uri.path}/.prettierignore`);
+  const folderUri = folders[0].uri;
+  const uri = folderUri.with({
+    path: posix.join(folderUri.path, ".prettierignore"),
+  });
+
   const filename = editor.document.fileName.replace(
-    `${folders[0].uri.path}/`,
+    `${folderUri.path}${sep}`,
     ""
   );
-  workspace.fs.writeFile(uri, new TextEncoder().encode(filename));
+  workspace.fs.writeFile(uri, Buffer.from(filename, "utf8"));
 };
