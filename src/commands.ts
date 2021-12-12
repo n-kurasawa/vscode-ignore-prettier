@@ -40,3 +40,7 @@ export const add = async () => {
     Buffer.from(currentValue + filename + EOL, "utf8")
   );
 };
+
+export const remove = () => {
+  console.log("remove command");
+};
