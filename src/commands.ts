@@ -23,7 +23,7 @@ export const add = async () => {
   let currentValue = "";
   try {
     const readData = await workspace.fs.readFile(uri);
-    currentValue = Buffer.from(readData).toString("utf8") + EOL;
+    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
   } catch (e) {
     if (e instanceof FileSystemError && e.code === "FileNotFound") {
     } else {
@@ -35,5 +35,8 @@ export const add = async () => {
     `${folderUri.path}${sep}`,
     ""
   );
-  workspace.fs.writeFile(uri, Buffer.from(currentValue + filename, "utf8"));
+  workspace.fs.writeFile(
+    uri,
+    Buffer.from(currentValue + filename + EOL, "utf8")
+  );
 };
