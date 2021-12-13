@@ -1,6 +1,7 @@
 import { window, workspace, FileSystemError } from "vscode";
 import { posix, sep } from "path";
 import { EOL } from "os";
+import { removeFilename } from "./editFile";
 
 export const add = async () => {
   const folders = workspace.workspaceFolders;
@@ -80,14 +81,4 @@ export const remove = async () => {
   } else {
     workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
   }
-};
-
-export const removeFilename = (current: string, filename: string): string => {
-  const escapedFilename = escapeRegExp(filename);
-  const regexp = new RegExp(`^${escapedFilename}$[\\n|\\r|\\r\\n]?`, "gm");
-  return current.replace(regexp, "");
-};
-
-const escapeRegExp = (string: string): string => {
-  return string.replace(/[.*+?^=!:${}()|[\]\/\\]/g, "\\$&");
 };
