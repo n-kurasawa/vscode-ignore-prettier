@@ -74,15 +74,18 @@ export const remove = async () => {
     `${folderUri.path}${sep}`,
     ""
   );
-
-  const escapedFilename = escapeRegExp(filename);
-  const regexp = new RegExp(`^${escapedFilename}\\s*`, "gm");
-  const newValue = currentValue.replace(regexp, "");
+  const newValue = removeFilename(currentValue, filename);
   if (newValue.trim() === "") {
     workspace.fs.delete(uri);
   } else {
     workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
   }
+};
+
+export const removeFilename = (current: string, filename: string): string => {
+  const escapedFilename = escapeRegExp(filename);
+  const regexp = new RegExp(`^${escapedFilename}$[\\n|\\r|\\r\\n]?`, "gm");
+  return current.replace(regexp, "");
 };
 
 const escapeRegExp = (string: string): string => {
