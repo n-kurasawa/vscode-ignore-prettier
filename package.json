@@ -3,6 +3,12 @@
   "displayName": "Ignore Prettier",
   "description": "Tools for .prettierignore",
   "version": "1.0.0",
+  "publisher": "nkurasawa",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/n-kurasawa/vscode-ignore-prettier.git"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.63.0"
   },
