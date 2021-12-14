@@ -1,7 +1,7 @@
 import { window, workspace, FileSystemError } from "vscode";
 import { posix, sep } from "path";
 import { EOL } from "os";
-import { removeFilename } from "./editFile";
+import { removeFilename } from "./removeFilename";
 
 export const add = async () => {
   const folders = workspace.workspaceFolders;
