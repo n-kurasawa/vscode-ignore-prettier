@@ -2,13 +2,14 @@
   "name": "vscode-ignore-prettier",
   "displayName": "Ignore Prettier",
   "description": "Tools for .prettierignore",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "nkurasawa",
   "repository": {
     "type": "git",
     "url": "https://github.com/n-kurasawa/vscode-ignore-prettier.git"
   },
   "license": "MIT",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.63.0"
   },
