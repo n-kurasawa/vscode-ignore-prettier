@@ -14,22 +14,27 @@ Install through VS Code extensions. Search for `nkurasawa.vscode-ignore-prettier
 
 ### Using Command Palette (CMD/CTRL + Shift + P)
 
-Add to `.prettierignore`.
-
-If `.prettierignore` is not present, create it.
+Before running the command, the following is required
 
 ```
-1. Open the file you want to add to `.prettierignore`
-2. CMD + Shift + P -> Ignore Prettier: Add
+1. Open the directory with vscode
+2. Open the file you want to add or remove from `.prettierignore`
+```
+
+Add to `.prettierignore`.
+
+If `.prettierignore` is not present, it will be created.
+
+```
+CMD + Shift + P -> Ignore Prettier: Add
 ```
 
 Remove from `.prettierignore`.
 
-If `.prettierignore` is empty, delete it.
+If `.prettierignore` is empty, it will be removed.
 
 ```
-1. Open the file you want to remove from `.prettierignore`
-2. CMD + Shift + P -> Ignore Prettier: Remove
+CMD + Shift + P -> Ignore Prettier: Remove
 ```
 
 ## Release Notes
