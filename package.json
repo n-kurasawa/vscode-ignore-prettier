@@ -1,8 +1,8 @@
 {
   "name": "vscode-ignore-prettier",
   "displayName": "Ignore Prettier",
-  "description": "",
-  "version": "0.0.1",
+  "description": "Tools for .prettierignore",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.63.0"
   },
