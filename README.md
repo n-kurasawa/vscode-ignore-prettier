@@ -1,6 +1,7 @@
 # vscode-ignore-prettier
 
 Allows you to add and remove files from `.prettierignore`.
+
 This is especially useful when you want to ignore a file temporarily.
 
 ## Usage
@@ -10,14 +11,14 @@ This is especially useful when you want to ignore a file temporarily.
 Add to `.prettierignore`.
 
 ```
-1. Open a file
+1. Open the file you want to add to `.prettierignore`
 2. CMD + Shift + P -> Ignore Prettier: Add
 ```
 
 Remove from `.prettierignore`.
 
 ```
-1. Open a file
+1. Open the file you want to remove from `.prettierignore`
 2. CMD + Shift + P -> Ignore Prettier: Remove
 ```
 
