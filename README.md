@@ -2,7 +2,10 @@
 
 Allows you to add and remove files from `.prettierignore`.
 
-This is especially useful when you want to ignore a file temporarily.
+~~This is especially useful when you want to ignore a file temporarily.~~
+
+If you just want to ignore it temporarily It may be more convenient to use the [Formatting Toggle](https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle).
+Alternatively, VS Code provides Save Without Formatting.
 
 ## Installation
 
