@@ -82,3 +82,7 @@ export const remove = async () => {
     workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
   }
 };
+
+export const toggle = async () => {
+  console.log("toggle");
+};

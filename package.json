@@ -17,8 +17,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:ignoreprettier.add",
-    "onCommand:ignoreprettier.remove"
+    "workspaceContains:**/*"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -32,6 +31,11 @@
         "command": "ignoreprettier.remove",
         "category": "Ignore Prettier",
         "title": "Remove"
+      },
+      {
+        "command": "ignoreprettier.toggle",
+        "category": "Ignore Prettier",
+        "title": "Toggle"
       }
     ]
   },
