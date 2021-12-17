@@ -1,11 +1,5 @@
-import {
-  window,
-  workspace,
-  FileSystemError,
-  WorkspaceFolder,
-  Uri,
-  TextEditor,
-} from "vscode";
+import { window, workspace, FileSystemError } from "vscode";
+import type { WorkspaceFolder, Uri, TextEditor } from "vscode";
 import { posix, sep } from "path";
 import { EOL } from "os";
 import { removeFilename } from "./removeFilename";
@@ -36,7 +30,7 @@ const exists = async (uri: Uri): Promise<boolean> => {
   return true;
 };
 
-const extractFilenameFromRoodDir = (
+const extractFilenameFromRoot = (
   editor: TextEditor,
   folder: WorkspaceFolder
 ) => {
@@ -68,13 +62,13 @@ export const add = async () => {
     currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
   }
 
-  const filename = extractFilenameFromRoodDir(editor, folder);
+  const filename = extractFilenameFromRoot(editor, folder);
   workspace.fs.writeFile(uri, createIgnoreValue(currentValue, filename));
 };
 
 export const remove = async () => {
-  const folders = workspace.workspaceFolders;
-  if (folders === undefined || folders.length > 1) {
+  const folder = getFolder();
+  if (folder === null) {
     console.error(`need a folder.`);
     return;
   }
@@ -85,27 +79,16 @@ export const remove = async () => {
     return;
   }
 
-  const folderUri = folders[0].uri;
-  const uri = folderUri.with({
-    path: posix.join(folderUri.path, ".prettierignore"),
-  });
+  const uri = getPrettierignoreUri(folder.uri);
 
   let currentValue = "";
-  try {
+  if (await exists(uri)) {
     const readData = await workspace.fs.readFile(uri);
-    currentValue = Buffer.from(readData).toString("utf8");
-  } catch (e) {
-    if (e instanceof FileSystemError && e.code === "FileNotFound") {
-      return;
-    } else {
-      throw e;
-    }
+    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
   }
 
-  const filename = editor.document.fileName.replace(
-    `${folderUri.path}${sep}`,
-    ""
-  );
+  const filename = extractFilenameFromRoot(editor, folder);
+
   const newValue = removeFilename(currentValue, filename);
   if (newValue.trim() === "") {
     workspace.fs.delete(uri);
