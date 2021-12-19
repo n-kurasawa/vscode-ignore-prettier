@@ -97,6 +97,37 @@ export const remove = async () => {
   }
 };
 
+const ignore = (): boolean => {
+  return false;
+};
+
 export const toggle = async () => {
-  console.log("toggle");
+  const folder = getFolder();
+  if (folder === null) {
+    console.error(`need a folder.`);
+    return;
+  }
+
+  const editor = window.activeTextEditor;
+  if (!editor) {
+    console.error(`need active text editor.`);
+    return;
+  }
+
+  const uri = getPrettierignoreUri(folder.uri);
+
+  let currentValue = "";
+  if (await exists(uri)) {
+    const readData = await workspace.fs.readFile(uri);
+    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+  }
+
+  const filename = extractFilenameFromRoot(editor, folder);
+
+  const newValue = removeFilename(currentValue, filename);
+  if (newValue.trim() === "") {
+    workspace.fs.delete(uri);
+  } else {
+    workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
+  }
 };
