@@ -38,7 +38,7 @@ const extractFilenameFromRoot = (
 };
 
 const createIgnoreValue = (currentValue: string, filename: string) => {
-  return Buffer.from(currentValue + filename + EOL, "utf8");
+  return currentValue + filename + EOL;
 };
 
 export const add = async () => {
@@ -63,7 +63,10 @@ export const add = async () => {
   }
 
   const filename = extractFilenameFromRoot(editor, folder);
-  workspace.fs.writeFile(uri, createIgnoreValue(currentValue, filename));
+  workspace.fs.writeFile(
+    uri,
+    Buffer.from(createIgnoreValue(currentValue, filename), "utf8")
+  );
 };
 
 export const remove = async () => {
@@ -97,10 +100,6 @@ export const remove = async () => {
   }
 };
 
-const ignore = (): boolean => {
-  return false;
-};
-
 export const toggle = async () => {
   const folder = getFolder();
   if (folder === null) {
@@ -121,10 +120,14 @@ export const toggle = async () => {
     const readData = await workspace.fs.readFile(uri);
     currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
   }
-
   const filename = extractFilenameFromRoot(editor, folder);
 
-  const newValue = removeFilename(currentValue, filename);
+  let newValue = removeFilename(currentValue, filename);
+  if (currentValue.includes(filename)) {
+    newValue = removeFilename(currentValue, filename);
+  } else {
+    newValue = createIgnoreValue(currentValue, filename);
+  }
   if (newValue.trim() === "") {
     workspace.fs.delete(uri);
   } else {
