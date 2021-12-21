@@ -37,7 +37,7 @@ const extractFilenameFromRoot = (
   return editor.document.fileName.replace(`${folder.uri.path}${sep}`, "");
 };
 
-const createIgnoreValue = (currentValue: string, filename: string) => {
+const addFilename = (currentValue: string, filename: string) => {
   return currentValue + filename + EOL;
 };
 
@@ -65,7 +65,7 @@ export const add = async () => {
   const filename = extractFilenameFromRoot(editor, folder);
   workspace.fs.writeFile(
     uri,
-    Buffer.from(createIgnoreValue(currentValue, filename), "utf8")
+    Buffer.from(addFilename(currentValue, filename), "utf8")
   );
 };
 
@@ -126,7 +126,7 @@ export const toggle = async () => {
   if (currentValue.includes(filename)) {
     newValue = removeFilename(currentValue, filename);
   } else {
-    newValue = createIgnoreValue(currentValue, filename);
+    newValue = addFilename(currentValue, filename);
   }
   if (newValue.trim() === "") {
     workspace.fs.delete(uri);
