@@ -134,3 +134,39 @@ export const toggle = async () => {
     workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
   }
 };
+
+const isActive = async (): Promise<boolean> => {
+  const folder = getFolder();
+  if (folder === null) {
+    console.error(`need a folder.`);
+    return false;
+  }
+
+  const editor = window.activeTextEditor;
+  if (!editor) {
+    console.error(`need active text editor.`);
+    return false;
+  }
+
+  const uri = getPrettierignoreUri(folder.uri);
+
+  let currentValue = "";
+  if (await exists(uri)) {
+    const readData = await workspace.fs.readFile(uri);
+    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+  }
+  const filename = extractFilenameFromRoot(editor, folder);
+  if (currentValue.includes(filename)) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const getStatusBarText = async (): Promise<string> => {
+  if (await isActive()) {
+    return "$(check) Toggle Prettier";
+  } else {
+    return "$(x) Toggle Prettier";
+  }
+};

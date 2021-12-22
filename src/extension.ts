@@ -1,5 +1,5 @@
-import { commands, ExtensionContext } from "vscode";
-import { add, remove, toggle } from "./commands";
+import { commands, ExtensionContext, window, TextEditor } from "vscode";
+import { add, remove, toggle, getStatusBarText } from "./commands";
 import { createStatusBarItem } from "./createStatusBarItem";
 
 export function activate(context: ExtensionContext) {
@@ -15,7 +15,15 @@ export function activate(context: ExtensionContext) {
     "ignoreprettier.toggle",
     toggle
   );
+  const activeTextEditorChangeListener = window.onDidChangeActiveTextEditor(
+    async (e: TextEditor | undefined) => {
+      if (e) {
+        statusBarItem.text = await getStatusBarText();
+      }
+    }
+  );
 
   context.subscriptions.push(statusBarItem);
   context.subscriptions.push(addCommand, removeCommand, toggleCommand);
+  context.subscriptions.push(activeTextEditorChangeListener);
 }
