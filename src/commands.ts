@@ -1,8 +1,11 @@
 import { window, workspace, FileSystemError } from "vscode";
-import type { WorkspaceFolder, Uri, TextEditor } from "vscode";
+import type { WorkspaceFolder, Uri, TextEditor, StatusBarItem } from "vscode";
 import { posix, sep } from "path";
 import { EOL } from "os";
 import { removeFilename } from "./removeFilename";
+
+const enableText = "$(check) Toggle Prettier";
+const disableText = "$(circle-slash) Toggle Prettier";
 
 const getFolder = (): WorkspaceFolder | null => {
   const folders = workspace.workspaceFolders;
@@ -41,110 +44,118 @@ const addFilename = (currentValue: string, filename: string) => {
   return currentValue + filename + EOL;
 };
 
-export const add = async () => {
-  const folder = getFolder();
-  if (folder === null) {
-    console.error(`need a folder.`);
-    return;
-  }
+export const add = (statusBarItem: StatusBarItem) => {
+  return async () => {
+    const folder = getFolder();
+    if (folder === null) {
+      console.error(`need a folder.`);
+      return;
+    }
 
-  const editor = window.activeTextEditor;
-  if (!editor) {
-    console.error(`need active text editor.`);
-    return;
-  }
+    const editor = window.activeTextEditor;
+    if (!editor) {
+      console.error(`need active text editor.`);
+      return;
+    }
 
-  const uri = getPrettierignoreUri(folder.uri);
+    const uri = getPrettierignoreUri(folder.uri);
 
-  let currentValue = "";
-  if (await exists(uri)) {
-    const readData = await workspace.fs.readFile(uri);
-    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-  }
+    let currentValue = "";
+    if (await exists(uri)) {
+      const readData = await workspace.fs.readFile(uri);
+      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+    }
 
-  const filename = extractFilenameFromRoot(editor, folder);
-  workspace.fs.writeFile(
-    uri,
-    Buffer.from(addFilename(currentValue, filename), "utf8")
-  );
+    const filename = extractFilenameFromRoot(editor, folder);
+    workspace.fs.writeFile(
+      uri,
+      Buffer.from(addFilename(currentValue, filename), "utf8")
+    );
+    statusBarItem.text = disableText;
+  };
 };
 
-export const remove = async () => {
-  const folder = getFolder();
-  if (folder === null) {
-    console.error(`need a folder.`);
-    return;
-  }
+export const remove = (statusBarItem: StatusBarItem) => {
+  return async () => {
+    const folder = getFolder();
+    if (folder === null) {
+      console.error(`need a folder.`);
+      return;
+    }
 
-  const editor = window.activeTextEditor;
-  if (!editor) {
-    console.error(`need active text editor.`);
-    return;
-  }
+    const editor = window.activeTextEditor;
+    if (!editor) {
+      console.error(`need active text editor.`);
+      return;
+    }
 
-  const uri = getPrettierignoreUri(folder.uri);
+    const uri = getPrettierignoreUri(folder.uri);
 
-  let currentValue = "";
-  if (await exists(uri)) {
-    const readData = await workspace.fs.readFile(uri);
-    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-  }
+    let currentValue = "";
+    if (await exists(uri)) {
+      const readData = await workspace.fs.readFile(uri);
+      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+    }
 
-  const filename = extractFilenameFromRoot(editor, folder);
+    const filename = extractFilenameFromRoot(editor, folder);
 
-  const newValue = removeFilename(currentValue, filename);
-  if (newValue.trim() === "") {
-    workspace.fs.delete(uri);
-  } else {
-    workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
-  }
+    const newValue = removeFilename(currentValue, filename);
+    if (newValue.trim() === "") {
+      workspace.fs.delete(uri);
+    } else {
+      workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
+    }
+    statusBarItem.text = enableText;
+  };
 };
 
-export const toggle = async () => {
-  const folder = getFolder();
-  if (folder === null) {
-    console.error(`need a folder.`);
-    return;
-  }
+export const toggle = (statusBarItem: StatusBarItem) => {
+  return async () => {
+    const folder = getFolder();
+    if (folder === null) {
+      console.error(`need a folder.`);
+      return;
+    }
 
-  const editor = window.activeTextEditor;
-  if (!editor) {
-    console.error(`need active text editor.`);
-    return;
-  }
+    const editor = window.activeTextEditor;
+    if (!editor) {
+      console.error(`need active text editor.`);
+      return;
+    }
 
-  const uri = getPrettierignoreUri(folder.uri);
+    const uri = getPrettierignoreUri(folder.uri);
 
-  let currentValue = "";
-  if (await exists(uri)) {
-    const readData = await workspace.fs.readFile(uri);
-    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-  }
-  const filename = extractFilenameFromRoot(editor, folder);
+    let currentValue = "";
+    if (await exists(uri)) {
+      const readData = await workspace.fs.readFile(uri);
+      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+    }
+    const filename = extractFilenameFromRoot(editor, folder);
 
-  let newValue = removeFilename(currentValue, filename);
-  if (currentValue.includes(filename)) {
-    newValue = removeFilename(currentValue, filename);
-  } else {
-    newValue = addFilename(currentValue, filename);
-  }
-  if (newValue.trim() === "") {
-    workspace.fs.delete(uri);
-  } else {
-    workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
-  }
+    let newValue = removeFilename(currentValue, filename);
+    if (currentValue.includes(filename)) {
+      newValue = removeFilename(currentValue, filename);
+      statusBarItem.text = enableText;
+    } else {
+      newValue = addFilename(currentValue, filename);
+      statusBarItem.text = disableText;
+    }
+    if (newValue.trim() === "") {
+      workspace.fs.delete(uri);
+    } else {
+      workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
+    }
+  };
 };
 
 const isActive = async (): Promise<boolean> => {
   const folder = getFolder();
   if (folder === null) {
-    console.error(`need a folder.`);
     return false;
   }
 
   const editor = window.activeTextEditor;
   if (!editor) {
-    console.error(`need active text editor.`);
     return false;
   }
 
@@ -165,8 +176,8 @@ const isActive = async (): Promise<boolean> => {
 
 export const getStatusBarText = async (): Promise<string> => {
   if (await isActive()) {
-    return "$(check) Toggle Prettier";
+    return enableText;
   } else {
-    return "$(x) Toggle Prettier";
+    return disableText;
   }
 };
