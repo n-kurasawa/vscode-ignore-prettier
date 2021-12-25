@@ -44,13 +44,6 @@ const addFilename = (currentValue: string, filename: string) => {
   return currentValue + filename + EOL;
 };
 
-export interface IVscodeRepository {
-  getOpenedFilename(): string;
-  writeFileName(filename: string): void;
-  disableStatusBarItemText(): void;
-  enableStatusBarItemText(): void;
-}
-
 export const add = (statusBarItem: StatusBarItem) => {
   return async () => {
     const folder = getFolder();

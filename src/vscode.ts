@@ -1,10 +1,9 @@
-import { IVscodeRepository } from "./commands";
 import { StatusBarItem } from "vscode";
 
 const enableText = "$(check) Toggle Prettier";
 const disableText = "$(circle-slash) Toggle Prettier";
 
-export class VscodeRepository implements IVscodeRepository {
+export class Vscode {
   constructor(private statusBarItem: StatusBarItem) {}
 
   getOpenedFilename(): string {
