@@ -1,4 +1,7 @@
 # Ignore Prettier
+**This is a development branch that is actively being worked on.**
+
+---
 
 Allows you to add and remove files from `.prettierignore`.
 
