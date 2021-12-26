@@ -1,183 +1,31 @@
-import { window, workspace, FileSystemError } from "vscode";
-import type { WorkspaceFolder, Uri, TextEditor, StatusBarItem } from "vscode";
-import { posix, sep } from "path";
-import { EOL } from "os";
-import { removeFilename } from "./removeFilename";
+import { Vscode } from "./vscode";
 
-const enableText = "$(check) Toggle Prettier";
-const disableText = "$(circle-slash) Toggle Prettier";
-
-const getFolder = (): WorkspaceFolder | null => {
-  const folders = workspace.workspaceFolders;
-  if (folders === undefined || folders.length > 1) {
-    return null;
-  }
-  return folders[0];
-};
-
-const getPrettierignoreUri = (uri: Uri) => {
-  return uri.with({
-    path: posix.join(uri.path, ".prettierignore"),
-  });
-};
-
-const exists = async (uri: Uri): Promise<boolean> => {
-  try {
-    await workspace.fs.stat(uri);
-  } catch (e) {
-    if (e instanceof FileSystemError && e.code === "FileNotFound") {
-      return false;
-    }
-    throw e;
-  }
-  return true;
-};
-
-const extractFilenameFromRoot = (
-  editor: TextEditor,
-  folder: WorkspaceFolder
-) => {
-  return editor.document.fileName.replace(`${folder.uri.path}${sep}`, "");
-};
-
-const addFilename = (currentValue: string, filename: string) => {
-  return currentValue + filename + EOL;
-};
-
-export const add = (statusBarItem: StatusBarItem) => {
-  return async () => {
-    const folder = getFolder();
-    if (folder === null) {
-      console.error(`need a folder.`);
+export const addFunc = (vscode: Vscode) => {
+  return () => {
+    const filename = vscode.getOpenedFilename();
+    if (filename === "") {
       return;
     }
-
-    const editor = window.activeTextEditor;
-    if (!editor) {
-      console.error(`need active text editor.`);
-      return;
-    }
-
-    const uri = getPrettierignoreUri(folder.uri);
-
-    let currentValue = "";
-    if (await exists(uri)) {
-      const readData = await workspace.fs.readFile(uri);
-      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-    }
-
-    const filename = extractFilenameFromRoot(editor, folder);
-    workspace.fs.writeFile(
-      uri,
-      Buffer.from(addFilename(currentValue, filename), "utf8")
-    );
-    statusBarItem.text = disableText;
+    vscode.addFilename(filename);
   };
 };
 
-export const remove = (statusBarItem: StatusBarItem) => {
-  return async () => {
-    const folder = getFolder();
-    if (folder === null) {
-      console.error(`need a folder.`);
+export const removeFunc = (vscode: Vscode) => {
+  return () => {
+    const filename = vscode.getOpenedFilename();
+    if (filename === "") {
       return;
     }
-
-    const editor = window.activeTextEditor;
-    if (!editor) {
-      console.error(`need active text editor.`);
-      return;
-    }
-
-    const uri = getPrettierignoreUri(folder.uri);
-
-    let currentValue = "";
-    if (await exists(uri)) {
-      const readData = await workspace.fs.readFile(uri);
-      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-    }
-
-    const filename = extractFilenameFromRoot(editor, folder);
-
-    const newValue = removeFilename(currentValue, filename);
-    if (newValue.trim() === "") {
-      workspace.fs.delete(uri);
-    } else {
-      workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
-    }
-    statusBarItem.text = enableText;
+    vscode.removeFilename(filename);
   };
 };
 
-export const toggle = (statusBarItem: StatusBarItem) => {
-  return async () => {
-    const folder = getFolder();
-    if (folder === null) {
-      console.error(`need a folder.`);
+export const toggleFunc = (vscode: Vscode) => {
+  return () => {
+    const filename = vscode.getOpenedFilename();
+    if (filename === "") {
       return;
     }
-
-    const editor = window.activeTextEditor;
-    if (!editor) {
-      console.error(`need active text editor.`);
-      return;
-    }
-
-    const uri = getPrettierignoreUri(folder.uri);
-
-    let currentValue = "";
-    if (await exists(uri)) {
-      const readData = await workspace.fs.readFile(uri);
-      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-    }
-    const filename = extractFilenameFromRoot(editor, folder);
-
-    let newValue = removeFilename(currentValue, filename);
-    if (currentValue.includes(filename)) {
-      newValue = removeFilename(currentValue, filename);
-      statusBarItem.text = enableText;
-    } else {
-      newValue = addFilename(currentValue, filename);
-      statusBarItem.text = disableText;
-    }
-    if (newValue.trim() === "") {
-      workspace.fs.delete(uri);
-    } else {
-      workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
-    }
+    vscode.toggleFilename(filename);
   };
-};
-
-const isActive = async (): Promise<boolean> => {
-  const folder = getFolder();
-  if (folder === null) {
-    return false;
-  }
-
-  const editor = window.activeTextEditor;
-  if (!editor) {
-    return false;
-  }
-
-  const uri = getPrettierignoreUri(folder.uri);
-
-  let currentValue = "";
-  if (await exists(uri)) {
-    const readData = await workspace.fs.readFile(uri);
-    currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-  }
-  const filename = extractFilenameFromRoot(editor, folder);
-  if (currentValue.includes(filename)) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
-export const getStatusBarText = async (): Promise<string> => {
-  if (await isActive()) {
-    return enableText;
-  } else {
-    return disableText;
-  }
 };

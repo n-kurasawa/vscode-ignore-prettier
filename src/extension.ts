@@ -1,22 +1,24 @@
 import { commands, ExtensionContext, window, TextEditor } from "vscode";
-import { add, remove, toggle, getStatusBarText } from "./commands";
+import { addFunc, removeFunc, toggleFunc } from "./commands";
 import { createStatusBarItem } from "./createStatusBarItem";
+import { getStatusBarText, Vscode } from "./vscode";
 
 export async function activate(context: ExtensionContext) {
   console.log('Extension "vscode-ignore-prettier" is activated.');
 
   const statusBarItem = await createStatusBarItem();
+  const vscode = new Vscode(statusBarItem);
   const addCommand = commands.registerCommand(
     "ignoreprettier.add",
-    add(statusBarItem)
+    addFunc(vscode)
   );
   const removeCommand = commands.registerCommand(
     "ignoreprettier.remove",
-    remove(statusBarItem)
+    removeFunc(vscode)
   );
   const toggleCommand = commands.registerCommand(
     "ignoreprettier.toggle",
-    toggle(statusBarItem)
+    toggleFunc(vscode)
   );
   const activeTextEditorChangeListener = window.onDidChangeActiveTextEditor(
     async (e: TextEditor | undefined) => {

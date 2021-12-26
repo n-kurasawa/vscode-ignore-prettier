@@ -1,5 +1,5 @@
 import { window, StatusBarAlignment } from "vscode";
-import { getStatusBarText } from "./commands";
+import { getStatusBarText } from "./vscode";
 
 export const createStatusBarItem = async () => {
   const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
