@@ -81,6 +81,7 @@ class EditService {
   private folder: WorkspaceFolder;
   private editor: TextEditor;
   private statusBarItem: StatusBarItem;
+
   constructor(statusBarItem: StatusBarItem) {
     this.statusBarItem = statusBarItem;
     const folders = workspace.workspaceFolders;
@@ -93,6 +94,7 @@ class EditService {
     }
     this.editor = window.activeTextEditor;
   }
+
   async add() {
     const filename = this.getOpenedFilename();
     const uri = this.getPrettierignoreUri();
@@ -105,8 +107,47 @@ class EditService {
     workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
     this.disableStatusBarItemText();
   }
-  remove() {}
-  toggle() {}
+
+  async remove() {
+    const filename = this.getOpenedFilename();
+    const uri = this.getPrettierignoreUri();
+    let currentValue = "";
+    if (await this.exists(uri)) {
+      const readData = await workspace.fs.readFile(uri);
+      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+    }
+    const newValue = removeFilename(currentValue, filename);
+    if (newValue.trim() === "") {
+      workspace.fs.delete(uri);
+    } else {
+      workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
+    }
+    this.enableStatusBarItemText();
+  }
+
+  async toggle() {
+    const filename = this.getOpenedFilename();
+    const uri = this.getPrettierignoreUri();
+    let currentValue = "";
+    if (await this.exists(uri)) {
+      const readData = await workspace.fs.readFile(uri);
+      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
+    }
+    let newValue = "";
+    if (currentValue.includes(filename)) {
+      newValue = removeFilename(currentValue, filename);
+      this.enableStatusBarItemText();
+    } else {
+      newValue = currentValue + filename + EOL;
+      this.disableStatusBarItemText();
+    }
+    if (newValue.trim() === "") {
+      workspace.fs.delete(uri);
+    } else {
+      workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
+    }
+  }
+
   private async exists(uri: Uri): Promise<boolean> {
     try {
       await workspace.fs.stat(uri);
@@ -118,21 +159,25 @@ class EditService {
     }
     return true;
   }
+
   private getOpenedFilename(): string {
     return this.editor.document.fileName.replace(
       `${this.folder.uri.path}${sep}`,
       ""
     );
   }
+
   private getPrettierignoreUri = () => {
     const uri = this.folder.uri;
     return uri.with({
       path: posix.join(uri.path, ".prettierignore"),
     });
   };
+
   private disableStatusBarItemText(): void {
     this.statusBarItem.text = disableText;
   }
+
   private enableStatusBarItemText(): void {
     this.statusBarItem.text = enableText;
   }
