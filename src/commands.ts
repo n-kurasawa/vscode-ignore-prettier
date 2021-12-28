@@ -1,31 +1,26 @@
-import { Vscode } from "./vscode";
+import { StatusBarItem } from "vscode";
+import { EditService } from "./EditService";
 
-export const addFunc = (vscode: Vscode) => {
+export const addFunc = (statusBarItem: StatusBarItem) => {
   return () => {
-    const filename = vscode.getOpenedFilename();
-    if (filename === "") {
-      return;
-    }
-    vscode.addFilename(filename);
+    try {
+      new EditService(statusBarItem).add();
+    } catch (e) {}
   };
 };
 
-export const removeFunc = (vscode: Vscode) => {
+export const removeFunc = (statusBarItem: StatusBarItem) => {
   return () => {
-    const filename = vscode.getOpenedFilename();
-    if (filename === "") {
-      return;
-    }
-    vscode.removeFilename(filename);
+    try {
+      new EditService(statusBarItem).remove();
+    } catch (e) {}
   };
 };
 
-export const toggleFunc = (vscode: Vscode) => {
+export const toggleFunc = (statusBarItem: StatusBarItem) => {
   return () => {
-    const filename = vscode.getOpenedFilename();
-    if (filename === "") {
-      return;
-    }
-    vscode.toggleFilename(filename);
+    try {
+      new EditService(statusBarItem).toggle();
+    } catch (e) {}
   };
 };
