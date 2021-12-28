@@ -2,7 +2,6 @@ import { EOL } from "os";
 import { posix, sep } from "path";
 import {
   FileSystemError,
-  StatusBarItem,
   TextEditor,
   Uri,
   window,
@@ -10,17 +9,15 @@ import {
   WorkspaceFolder,
 } from "vscode";
 import { removeFilename } from "./removeFilename";
-
-export const enableText = "$(check) Toggle Prettier";
-const disableText = "$(circle-slash) Toggle Prettier";
+import { ToggleStatusBarItem } from "./ToggleStatusBarItem";
 
 export class EditService {
   private folder: WorkspaceFolder;
   private editor: TextEditor;
-  private statusBarItem: StatusBarItem;
+  private toggleStatusBarItem: ToggleStatusBarItem;
 
-  constructor(statusBarItem: StatusBarItem) {
-    this.statusBarItem = statusBarItem;
+  constructor(toggleStatusBarItem: ToggleStatusBarItem) {
+    this.toggleStatusBarItem = toggleStatusBarItem;
     const folders = workspace.workspaceFolders;
     if (folders === undefined || folders.length > 1) {
       throw new Error("");
@@ -42,7 +39,7 @@ export class EditService {
     }
     const newValue = currentValue + filename + EOL;
     workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
-    this.disableStatusBarItemText();
+    this.toggleStatusBarItem.disableStatusBarItemText();
   }
 
   async remove() {
@@ -59,7 +56,7 @@ export class EditService {
     } else {
       workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
     }
-    this.enableStatusBarItemText();
+    this.toggleStatusBarItem.enableStatusBarItemText();
   }
 
   async toggle() {
@@ -73,38 +70,15 @@ export class EditService {
     let newValue = "";
     if (currentValue.includes(filename)) {
       newValue = removeFilename(currentValue, filename);
-      this.enableStatusBarItemText();
+      this.toggleStatusBarItem.enableStatusBarItemText();
     } else {
       newValue = currentValue + filename + EOL;
-      this.disableStatusBarItemText();
+      this.toggleStatusBarItem.disableStatusBarItemText();
     }
     if (newValue.trim() === "") {
       workspace.fs.delete(uri);
     } else {
       workspace.fs.writeFile(uri, Buffer.from(newValue, "utf8"));
-    }
-  }
-
-  async getStatusBarText(): Promise<string> {
-    if (await this.isActive()) {
-      return enableText;
-    } else {
-      return disableText;
-    }
-  }
-
-  private async isActive() {
-    const filename = this.getOpenedFilename();
-    const uri = this.getPrettierignoreUri();
-    let currentValue = "";
-    if (await this.exists(uri)) {
-      const readData = await workspace.fs.readFile(uri);
-      currentValue = Buffer.from(readData).toString("utf8").trimEnd() + EOL;
-    }
-    if (currentValue.includes(filename)) {
-      return false;
-    } else {
-      return true;
     }
   }
 
@@ -133,12 +107,4 @@ export class EditService {
       path: posix.join(uri.path, ".prettierignore"),
     });
   };
-
-  private disableStatusBarItemText(): void {
-    this.statusBarItem.text = disableText;
-  }
-
-  private enableStatusBarItemText(): void {
-    this.statusBarItem.text = enableText;
-  }
 }

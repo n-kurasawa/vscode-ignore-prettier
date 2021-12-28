@@ -1,26 +1,27 @@
 import { StatusBarItem } from "vscode";
 import { EditService } from "./EditService";
+import { ToggleStatusBarItem } from "./ToggleStatusBarItem";
 
-export const addFunc = (statusBarItem: StatusBarItem) => {
+export const addFunc = (toggleStatusBarItem: ToggleStatusBarItem) => {
   return () => {
     try {
-      new EditService(statusBarItem).add();
+      new EditService(toggleStatusBarItem).add();
     } catch (e) {}
   };
 };
 
-export const removeFunc = (statusBarItem: StatusBarItem) => {
+export const removeFunc = (toggleStatusBarItem: ToggleStatusBarItem) => {
   return () => {
     try {
-      new EditService(statusBarItem).remove();
+      new EditService(toggleStatusBarItem).remove();
     } catch (e) {}
   };
 };
 
-export const toggleFunc = (statusBarItem: StatusBarItem) => {
+export const toggleFunc = (toggleStatusBarItem: ToggleStatusBarItem) => {
   return () => {
     try {
-      new EditService(statusBarItem).toggle();
+      new EditService(toggleStatusBarItem).toggle();
     } catch (e) {}
   };
 };
