@@ -13,12 +13,16 @@ export class Vscode {
   private editor: TextEditor;
   constructor() {
     const folders = workspace.workspaceFolders;
-    if (folders === undefined || folders.length > 1) {
-      throw new Error("");
+    if (folders === undefined) {
+      throw new Error("folder not open.");
+    }
+    if (folders.length > 1) {
+      throw new Error("multiple folders open.");
     }
     this.folder = folders[0];
+
     if (!window.activeTextEditor) {
-      throw new Error("");
+      throw new Error("no active editor.");
     }
     this.editor = window.activeTextEditor;
   }

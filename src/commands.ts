@@ -7,6 +7,9 @@ const createVscode = (): Vscode | null => {
   try {
     vscode = new Vscode();
   } catch (e) {
+    if (e instanceof Error) {
+      console.error(`Error: ${e.message}`);
+    }
     return null;
   }
   return vscode;
