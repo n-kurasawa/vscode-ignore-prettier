@@ -1,14 +1,16 @@
 import * as assert from "assert";
+import { promises } from "fs";
 import { Uri, workspace } from "vscode";
 import { Vscode } from "../../vscode";
 
-function addFolder(dir: string, name: string) {
-  const result = workspace.updateWorkspaceFolders(
+async function createFolder(dir: string) {
+  await promises.mkdir(dir, { recursive: true });
+
+  workspace.updateWorkspaceFolders(
     workspace.workspaceFolders ? workspace.workspaceFolders.length : 0,
     null,
     {
       uri: Uri.parse(dir),
-      name,
     }
   );
 }
@@ -27,8 +29,10 @@ suite("vscode test", () => {
     }
   });
 
-  test("init exsits folder", () => {
-    addFolder("test", "folder");
+  test("init exsits folder", async () => {
+    const dir = `${process.cwd()}/test`;
+    await createFolder(dir);
+
     try {
       new Vscode();
       assert.fail();
