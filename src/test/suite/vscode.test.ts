@@ -40,16 +40,27 @@ suite("vscode test", () => {
 
     test("exists", async () => {
       const file = `${process.cwd()}/test-target/test.js`;
-      const vscode = new Vscode();
-      const actual = await vscode.exists(Uri.parse(file));
+      const actual = await new Vscode().exists(Uri.parse(file));
       assert.strictEqual(actual, true);
     });
 
     test("not exists", async () => {
-      const vscode = new Vscode();
       const notexists = `${process.cwd()}/test-target/not-exists.js`;
-      const actual = await vscode.exists(Uri.parse(notexists));
+      const actual = await new Vscode().exists(Uri.parse(notexists));
       assert.strictEqual(actual, false);
+    });
+
+    test("getOpenedFilename", () => {
+      const actual = new Vscode().getOpenedFilename();
+      assert.strictEqual(actual, "test.js");
+    });
+
+    test("getPrettierignoreUri", () => {
+      const actual = new Vscode().getPrettierignoreUri();
+      assert.strictEqual(
+        actual.path,
+        `${process.cwd()}/test-target/.prettierignore`
+      );
     });
   });
 });
