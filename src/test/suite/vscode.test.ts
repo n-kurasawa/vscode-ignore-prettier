@@ -5,7 +5,7 @@ import { Vscode } from "../../vscode";
 
 suite("Vscode", () => {
   suite("no active editor", () => {
-    test("init", async () => {
+    test("init", () => {
       try {
         new Vscode();
         assert.fail();
@@ -29,7 +29,7 @@ suite("Vscode", () => {
       await commands.executeCommand("workbench.action.closeActiveEditor");
     });
 
-    test("init", async () => {
+    test("init", () => {
       try {
         const vscode = new Vscode();
         assert.ok(vscode);
