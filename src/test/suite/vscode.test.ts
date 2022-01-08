@@ -3,7 +3,7 @@ import { suite } from "mocha";
 import { commands, Uri, window } from "vscode";
 import { Vscode } from "../../vscode";
 
-suite("vscode test", () => {
+suite("Vscode", () => {
   suite("no active editor", () => {
     test("init", async () => {
       try {
@@ -61,6 +61,12 @@ suite("vscode test", () => {
         actual.path,
         `${process.cwd()}/test-target/.prettierignore`
       );
+    });
+
+    test("readFile", async () => {
+      const uri = Uri.parse(`${process.cwd()}/test-target/test.js`);
+      const actual = await new Vscode().readFile(uri);
+      assert.strictEqual(actual, "test\n");
     });
   });
 });
