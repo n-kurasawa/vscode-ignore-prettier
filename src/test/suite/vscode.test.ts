@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import { suite } from "mocha";
-import { commands, Uri, window } from "vscode";
+import { commands, Uri, window, workspace } from "vscode";
 import { Vscode } from "../../vscode";
 
 suite("Vscode", () => {
@@ -68,5 +68,29 @@ suite("Vscode", () => {
       const actual = await new Vscode().readFile(uri);
       assert.strictEqual(actual, "test\n");
     });
+
+    test("writeFile", async () => {
+      const uri = Uri.parse(`${process.cwd()}/test-target/write.js`);
+      const vscode = new Vscode();
+
+      // create file
+      await vscode.writeFile(uri, "create");
+
+      const actual1 = await read(uri);
+      assert.strictEqual(actual1, "create");
+
+      // update file
+      await vscode.writeFile(uri, "update");
+
+      const actual2 = await read(uri);
+      assert.strictEqual(actual2, "update");
+
+      await workspace.fs.delete(uri);
+    });
   });
 });
+
+const read = async (uri: Uri) => {
+  const readData = await workspace.fs.readFile(uri);
+  return Buffer.from(readData).toString("utf8");
+};
