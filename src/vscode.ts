@@ -59,10 +59,10 @@ export class Vscode {
   }
 
   writeFile(uri: Uri, value: string) {
-    workspace.fs.writeFile(uri, Buffer.from(value, "utf8"));
+    return workspace.fs.writeFile(uri, Buffer.from(value, "utf8"));
   }
 
   deleteFile(uri: Uri) {
-    workspace.fs.delete(uri);
+    return workspace.fs.delete(uri);
   }
 }
