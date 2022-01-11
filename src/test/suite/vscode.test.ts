@@ -27,6 +27,9 @@ suite("Vscode", () => {
 
     suiteTeardown(async () => {
       await commands.executeCommand("workbench.action.closeActiveEditor");
+
+      const writeFileUri = Uri.parse(`${process.cwd()}/test-target/write.js`);
+      await workspace.fs.delete(writeFileUri);
     });
 
     test("init", () => {
@@ -84,8 +87,6 @@ suite("Vscode", () => {
 
       const actual2 = await read(uri);
       assert.strictEqual(actual2, "update");
-
-      await workspace.fs.delete(uri);
     });
   });
 });
