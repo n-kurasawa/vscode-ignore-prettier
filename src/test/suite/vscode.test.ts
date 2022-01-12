@@ -2,6 +2,8 @@ import * as assert from "assert";
 import { suite } from "mocha";
 import { commands, Uri, window, workspace } from "vscode";
 import { Vscode } from "../../vscode";
+import * as fs from "fs";
+import { Buffer } from "buffer";
 
 suite("Vscode", () => {
   suite("no active editor", () => {
@@ -30,6 +32,11 @@ suite("Vscode", () => {
 
       const writeFileUri = Uri.parse(`${process.cwd()}/test-target/write.js`);
       await workspace.fs.delete(writeFileUri);
+
+      const deleteFileUri = Uri.parse(
+        `${process.cwd()}/test-target/delete-test.js`
+      );
+      await workspace.fs.writeFile(deleteFileUri, Buffer.from("", "utf8"));
     });
 
     test("init", () => {
@@ -87,6 +94,14 @@ suite("Vscode", () => {
 
       const actual2 = await read(uri);
       assert.strictEqual(actual2, "update");
+    });
+
+    test("deleteFile", async () => {
+      const uri = Uri.parse(`${process.cwd()}/test-target/delete-test.js`);
+      const vscode = new Vscode();
+
+      await vscode.deleteFile(uri);
+      assert.strictEqual(fs.existsSync(uri.path), false);
     });
   });
 });
