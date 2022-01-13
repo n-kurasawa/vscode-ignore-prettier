@@ -1,4 +1,5 @@
 # Ignore Prettier
+
 **This is a development branch that is actively being worked on.**
 
 ---
@@ -17,6 +18,29 @@ Install through VS Code extensions. Search for `nkurasawa.vscode-ignore-prettier
 [Visual Studio Code Market Place: Ignore Prettier](https://marketplace.visualstudio.com/items?itemName=nkurasawa.vscode-ignore-prettier)
 
 ## Usage
+
+### Using Status Bar
+
+Before click status bar, the following is required
+
+```
+1. Open the directory with vscode
+2. Open the file you want to add or remove from `.prettierignore`
+```
+
+```
+Click the "Toggle Prettier" on the status bar.
+```
+
+#### If the file has not been added to .prettierignore.
+
+The file will be added.  
+If `.prettierignore` is not present, it will be created.
+
+#### If the file has been added to .prettierignore.
+
+The file will be removed.  
+If `.prettierignore` is empty, it will be removed.
 
 ### Using Command Palette (CMD/CTRL + Shift + P)
 
@@ -43,12 +67,22 @@ If `.prettierignore` is empty, it will be removed.
 CMD + Shift + P -> Ignore Prettier: Remove
 ```
 
+Toggle add and remove from `.prettierignore`.
+
+```
+CMD + Shift + P -> Ignore Prettier: Toggle
+```
+
 ## Release Notes
 
 ### 1.0.0
 
-Initial release of vscode-ignore-prettier
+- Initial release of vscode-ignore-prettier
 
 ### 1.0.1
 
-Update README
+- Update README
+
+### 2.0.0
+
+- Add Toggle Status Bar
