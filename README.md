@@ -28,6 +28,8 @@ Before click status bar, the following is required
 2. Open the file you want to add or remove from `.prettierignore`
 ```
 
+Toggle `.prettierignore`
+
 ```
 Click the "Toggle Prettier" on the status bar.
 ```
